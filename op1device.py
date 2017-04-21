@@ -133,9 +133,21 @@ class OP1Aiff(object):
         iff = IFFFile(f)
         appl = iff.__getitem__(u'APPL')     # sorry for accessing internal functions, but TE hides the metadata well
         rawdata = appl.read()
+        print rawdata
         data = rawdata.split('op-1')[1]
         f.close()
         return json.loads(data)
+
+    def _write_op1_data(self, filename):
+        f = open(filename, 'rw')
+        iff = IFFFile(f)
+        appl = iff.__getitem__(u'APPL')     # sorry for accessing internal functions, but TE hides the metadata well
+        print self.op1data
+        data = "op-1%s" % json.dumps(self.op1data, sort_keys=True)
+        print data
+        appl.write(data)
+        f.close()
+
 
     def _load_aiff_info(self, filename):
         return mutagen.aiff.AIFF(filename).info
@@ -169,8 +181,11 @@ class OP1Aiff(object):
         print ""
 
 
-d = OP1Device()
-print d.packs
-print d._get_usb_info()
+# d = OP1Device()
+# print d.packs
+# print d._get_usb_info()
 #pack = OP1Pack('c-mix', d, 'synth')
 #pack.check()
+
+o = OP1Aiff('/Users/sie0003a/git/ohhpee1/packs/packs/synth/c-mix/angelina_bg.aif')
+o._write_op1_data(o.filename)
