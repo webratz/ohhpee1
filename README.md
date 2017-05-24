@@ -1,6 +1,15 @@
 # OhhPee1
 This shall be a simple tool that makes file handling on your OP1 easier.
 
+# Use it
+Please be aware that this is work in progress and not yet properly usable without understanding both OP-1 and python.
+
+clone the repo, and then install dependencies
+```
+pip install -r requirements.txt
+./op1fun.py
+```
+
 ## Concepts
 ### Folder Structure on the OP1
 This is preset by Teenage Engineering, also we will make some opinionated assumptions

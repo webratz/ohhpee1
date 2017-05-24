@@ -156,6 +156,7 @@ class OP1Runner(object):
     def main(self):
         pack_completer = WordCompleter(self.of.get_packs())
 
+        print("This will install a pack onto your device immediately")
         packname = prompt(
             'Enter name of the pack (you can use tab for completion): ',
             completer=pack_completer,
