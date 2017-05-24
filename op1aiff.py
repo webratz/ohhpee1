@@ -1,18 +1,18 @@
-#!/usr/bin/env python
-import json
+# python imports
 import os
+import json
+
+# 3rd party imports
 from mutagen.aiff import IFFFile
 import mutagen
 from hurry.filesize import size
-# notes https://2016.mrmcd.net/fahrplan/system/event_attachments/attachments/000/002/895/original/OP1_reverse_enginering_MRMCD2016.pdf
-# https://www.operator-1.com/index.php?p=/discussion/2232/custom-firmware-on-the-op-1/p4
-
-# Max Synth Sampler patches = 42
-# Max Synth Synthesis patches = 100
-# Max Drum Patches = 42
 
 
 class OP1Aiff(object):
+    """
+    OP-1 creates normal aif files, altough they embed some json into the metadata
+    this is currently read only
+    """
     def __init__(self, filename):
         # max filename length 10 chars
         self.filename = filename
@@ -24,11 +24,25 @@ class OP1Aiff(object):
     def _load_op1_data(self, filename):
         f = open(filename, 'r')
         iff = IFFFile(f)
-        appl =  iff.__getitem__(u'APPL')
+        appl = iff.__getitem__(u'APPL')     # sorry for accessing internal functions, but TE hides the metadata well
         rawdata = appl.read()
+        print rawdata
         data = rawdata.split('op-1')[1]
         f.close()
         return json.loads(data)
+
+    def _write_op1_data(self, filename):
+        """
+        not yet working
+        """
+        f = open(filename, 'w')
+        iff = IFFFile(f)
+        appl = iff.__getitem__(u'APPL')     # sorry for accessing internal functions, but TE hides the metadata well
+        print self.op1data
+        data = "op-1%s" % json.dumps(self.op1data, sort_keys=True)
+        print data
+        appl.write(data)
+        f.close()
 
     def _load_aiff_info(self, filename):
         return mutagen.aiff.AIFF(filename).info
@@ -41,6 +55,12 @@ class OP1Aiff(object):
     def _get_size(self):
         # filesize in bytes
         return os.path.getsize(self.filename)
+
+    def check(self):
+        if len(self.op1data['name']) > 10:
+            # name may not be longer than 10 characters
+            return False
+        # TODO create validator for op1 json
 
     def summary(self):
         print "Name:\t%s" % self.name
@@ -55,16 +75,5 @@ class OP1Aiff(object):
 
         print ""
 
-
-
-
-
-
-
-checkpath = "/home/andi/op1/packs/cuckoo/c-mix/op1/put-in-synth/c-mix"
-for afile in os.listdir(checkpath):
-    if afile.endswith(".aif"):
-        patchfile = os.path.join(checkpath, afile)
-        patch = OP1Aiff(patchfile)
-        patch.summary()
-        #print patch.data
+# o = OP1Aiff('/Users/sie0003a/git/ohhpee1/packs/packs/synth/c-mix/angelina_bg.aif')
+# o._write_op1_data(o.filename)

@@ -1,2 +1,5 @@
 mutagen
 hurry.filesize
+pyusb
+psutil
+prompt-toolkit
